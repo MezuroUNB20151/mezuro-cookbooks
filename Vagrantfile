@@ -86,6 +86,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
+
+  # add support to RVM
+   config.vm.provision :shell, :path => "install-rvm.sh",  :args => "stable"
+
+  # chef configuration
    config.vm.provision "chef_solo" do |chef|
      #chef.cookbooks_path = "cookbooks"
      #chef.roles_path = "../my-recipes/roles"
