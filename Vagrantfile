@@ -87,16 +87,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # some recipes and/or roles.
   #
 
-  # add support to RVM
-   config.vm.provision :shell, :path => "install-rvm.sh",  :args => "stable"
-
   # chef configuration
    config.vm.provision "chef_solo" do |chef|
      #chef.cookbooks_path = "cookbooks"
      #chef.roles_path = "../my-recipes/roles"
      #chef.data_bags_path = "../my-recipes/data_bags"
-     #chef.add_recipe "mezuro"
+     chef.add_recipe "mezuro"
      #chef.add_role "web"
+
+     # add support to RVM
+     chef.add_recipe "chef_gem"
+     chef.add_recipe "rvm"
+     
   
      # You may also specify custom JSON attributes:
      #chef.json = { mysql_password: "foo" }
