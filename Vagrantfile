@@ -98,6 +98,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
      # add support to RVM
      chef.add_recipe "chef_gem"
      chef.add_recipe "rvm"
+
+     #add recipe for phantomjs
+     chef.add_recipe "phantomjs"
      
   
      # You may also specify custom JSON attributes:
