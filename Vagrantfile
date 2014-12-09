@@ -86,27 +86,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
-
   # chef configuration
    config.vm.provision "chef_solo" do |chef|
-     #chef.cookbooks_path = "cookbooks"
+     chef.cookbooks_path = "./cookbooks"
      #chef.roles_path = "../my-recipes/roles"
      #chef.data_bags_path = "../my-recipes/data_bags"
-     chef.add_recipe "mezuro"
      #chef.add_role "web"
-
-     # add support to RVM
-     chef.add_recipe "chef_gem"
-     chef.add_recipe "rvm"
-
-     #add recipe for phantomjs
-     chef.add_recipe "phantomjs"
+     #chef.json.merge! rvm: {vagrant: {system_chef_solo: '/opt/chef/bin/chef-solo'}}
      
-  
+     # add support to rvm
+     chef.add_recipe "rvm::system"
+     chef.add_recipe "rvm::vagrant"
+     
+     # add mezuro recipe
+     chef.add_recipe "mezuro"
+     
+     #add recipe for phantomjs
+     #chef.add_recipe "phantomjs"
+     
      # You may also specify custom JSON attributes:
      #chef.json = { mysql_password: "foo" }
-   end
-
+   end  
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
   #
