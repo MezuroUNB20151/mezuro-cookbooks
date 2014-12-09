@@ -8,6 +8,22 @@ prezento_folder = "/opt/mezuro/prezento"
 kalibro_gatekeeper_folder = "/opt/mezuro/kalibro_gatekeeper"
 kalibro_processor_folder = "/opt/mezuro/kalibro_processor"
 
+directory "#{repo_folder}" do
+	action :create
+end
+
+directory "#{prezento_folder}" do
+	action :create
+end
+
+directory "#{kalibro_processor_folder}" do
+	action :create
+end
+
+directory "#{kalibro_gatekeeper_folder}" do
+	action :create
+end
+
 # git package
 package "git" do
 	action :install
@@ -48,7 +64,6 @@ package "nodejs" do
 	action :install
 end
 
-## Prezento
 
 #prezento repository
 git "#{prezento_folder}" do
@@ -57,7 +72,23 @@ git "#{prezento_folder}" do
 	action :sync
 end
 
+#kalibro gatekeeper repository
+git "#{kalibro_gatekeeper_folder}" do
+	repository "https://github.com/mezuro/kalibro_gatekeeper.git"
+	revision "master"
+	action :sync
+end
 
+#kalibro processor repository
+git "#{kalibro_processor_folder}" do
+	repository "https://github.com/mezuro/kalibro_processor.git"
+	revision "master"
+	action :sync
+end
+
+
+
+## Prezento
 #prezento moving database files .sample
 file "#{repo_folder}/prezento/config/database.yml" do
 	owner 'root'
@@ -108,12 +139,6 @@ end
 
 ## Kalibro Processor
 
-#kalibro processor repository
-git "#{kalibro_processor_folder}" do
-	repository "https://github.com/mezuro/kalibro_processor.git"
-	action :sync
-end
-
 #kalibro processor moving database files .sample
 file "#{repo_folder}/kalibro_processor/config/database.yml" do
 	owner 'root'
@@ -154,12 +179,6 @@ end
 #end
 
 ## Kalibro Gatekeeper
-
-#kalibro gatekeeper repository
-git "#{kalibro_gatekeeper_folder}" do
-	repository "https://github.com/mezuro/kalibro_gatekeeper.git"
-	action :sync
-end
 
 #kalibro gatekeeper moving database files .sample
 file "#{repo_folder}/kalibro_gatekeeper/config/database.yml" do

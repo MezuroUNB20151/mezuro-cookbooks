@@ -95,12 +95,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
      #chef.json.merge! rvm: {vagrant: {system_chef_solo: '/opt/chef/bin/chef-solo'}}
      
      # add support to rvm
-     chef.add_recipe "rvm::system"
-     chef.add_recipe "rvm::vagrant"
+    # chef.add_recipe "chef_gem"
+    # chef.add_recipe "rvm::system"
+    # chef.add_recipe "rvm::vagrant"
      
+     #chef.json = {
+      #'rvm' => {
+       #  'rubies' => ["2.0.0-p353"],
+        # 'default_ruby' => "2.0.0-p353",
+         #:vagrant => { :system_chef_solo => "/usr/bin/chef-solo" }
+      #}
+    #}
      # add mezuro recipe
      chef.add_recipe "mezuro"
-     
      #add recipe for phantomjs
      #chef.add_recipe "phantomjs"
      
