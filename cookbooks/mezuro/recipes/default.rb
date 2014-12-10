@@ -2,12 +2,14 @@
 # Author: @thiagovsk (2014)
 # Mezuro installation recipes.
 
-#list of folders
+#LIST OF FOLDERS
 repo_folder = "/opt/mezuro"
 prezento_folder = "/opt/mezuro/prezento"
 kalibro_gatekeeper_folder = "/opt/mezuro/kalibro_gatekeeper"
 kalibro_processor_folder = "/opt/mezuro/kalibro_processor"
 
+
+## FOLDERS
 directory "#{repo_folder}" do
 	action :create
 end
@@ -24,8 +26,14 @@ directory "#{kalibro_gatekeeper_folder}" do
 	action :create
 end
 
+## PACKAGES
 # git package
 package "git" do
+	action :install
+end
+
+# tomcat package
+package "tomcat6" do
 	action :install
 end
 
@@ -64,6 +72,16 @@ package "nodejs" do
 	action :install
 end
 
+## SERVICES
+#tomcat service
+service "tomcat6" do
+  action :start
+end
+#postgresql service
+service "postgresql" do
+  action :start
+end
+
 
 #prezento repository
 git "#{prezento_folder}" do
@@ -75,45 +93,24 @@ end
 #kalibro gatekeeper repository
 git "#{kalibro_gatekeeper_folder}" do
 	repository "https://github.com/mezuro/kalibro_gatekeeper.git"
-	revision "master"
-	action :sync
+  revision "master"
+  action :sync
 end
 
 #kalibro processor repository
 git "#{kalibro_processor_folder}" do
 	repository "https://github.com/mezuro/kalibro_processor.git"
-	revision "master"
-	action :sync
+  revision "master"
+  action :sync
 end
 
-
-
-## Prezento
-#prezento moving database files .sample
-file "#{repo_folder}/prezento/config/database.yml" do
-	owner 'root'
-	group 'root'
-	mode 0755
-	content ::File.open("#{repo_folder}/prezento/config/database.yml.sample").read
-	action :create
-end
-
-#prezento moving database files .sample
-file "#{repo_folder}/prezento/config/kalibro_gatekeeper.yml" do
-	owner 'root'
-	group 'root'
-	mode 0755
-	content ::File.open("#{repo_folder}/prezento/config/kalibro_gatekeeper.yml.sample").read
-	action :create
-end
-
-#prezento moving database files .sample
-file "#{repo_folder}/prezento/config/kalibro_processor.yml" do
-	owner 'root'
-	group 'root'
-	mode 0755
-	content ::File.open("#{repo_folder}/prezento/config/kalibro_processor.yml.sample").read
-	action :create
+## Prezento files
+ruby_block "Prezento Files" do
+  block do
+    ::FileUtils.copy("#{repo_folder}/prezento/config/database.yml.sample", "#{repo_folder}/prezento/config/database.yml") unless ::File.exists? "#{repo_folder}/prezento/config/database.yml.sample" 
+ 		::FileUtils.copy("#{repo_folder}/prezento/config/kalibro_gatekeeper.yml.sample", "#{repo_folder}/prezento/config/kalibro_gatekeeper.yml") unless ::File.exists? "#{repo_folder}/prezento/config/kalibro_gatekeeper.yml.sample" 
+ 		::FileUtils.copy("#{repo_folder}/prezento/config/kalibro_processor.yml.sample", "#{repo_folder}/prezento/config/kalibro_processor.yml") unless ::File.exists? "#{repo_folder}/prezento/config/kalibro_processor.yml.sample"  
+  end
 end
 
 #execute bundle install for install all gems
@@ -139,22 +136,13 @@ end
 
 ## Kalibro Processor
 
-#kalibro processor moving database files .sample
-file "#{repo_folder}/kalibro_processor/config/database.yml" do
-	owner 'root'
-	group 'root'
-	mode 0755
-	content ::File.open("#{repo_folder}/kalibro_processor/config/database.yml.sample").read
-	action :create
-end
 
-#kalibro processor moving database files .sample
-file "#{repo_folder}/kalibro_processor/config/repositories.yml" do
-	owner 'root'
-	group 'root'
-	mode 0755
-	content ::File.open("#{repo_folder}/kalibro_processor/config/repositories.yml.sample").read
-	action :create
+## Prezento files
+ruby_block "kalibro_processor Files" do
+  block do
+    ::FileUtils.copy("#{repo_folder}/kalibro_processor/config/database.yml.sample", "#{repo_folder}/kalibro_processor/config/database.yml") unless ::File.exists? "#{repo_folder}/kalibro_processor/config/database.yml.sample" 
+    ::FileUtils.copy("#{repo_folder}/kalibro_processor/config/repositories.sample", "#{repo_folder}/kalibro_processor/config/repositories.yml") unless ::File.exists? "#{repo_folder}/kalibro_processor/config/database.yml.sample" 
+  end
 end
 
 #execute bundle install for install all gems
@@ -179,23 +167,11 @@ end
 #end
 
 ## Kalibro Gatekeeper
-
-#kalibro gatekeeper moving database files .sample
-file "#{repo_folder}/kalibro_gatekeeper/config/database.yml" do
-	owner 'root'
-	group 'root'
-	mode 0755
-	content ::File.open("#{repo_folder}/kalibro_gatekeeper/config/database.yml.sample").read
-	action :create
-end
-
-#kalibro gatekeeper moving kalibro processor files .sample
-file "#{repo_folder}/kalibro_gatekeeper/config/kalibro_processor.yml" do
-	owner 'root'
-	group 'root'
-	mode 0755
-	content ::File.open("#{repo_folder}/kalibro_gatekeeper/config/kalibro_processor.yml.sample").read
-	action :create
+ruby_block "kalibro_processor Files" do
+  block do
+    ::FileUtils.copy("#{repo_folder}/kalibro_gatekeeper/config/database.yml.sample", "#{repo_folder}/kalibro_gatekeeper/config/database.yml") unless ::File.exists? "#{repo_folder}/gatekeeper/config/database.yml.sample" 
+    ::FileUtils.copy("#{repo_folder}/kalibro_gatekeeper/config/kalibro_processor.yml.sample", "#{repo_folder}/kalibro_gatekeeper/config/kalibro_processor.yml") unless ::File.exists? "#{repo_folder}/gatekeeper/config/kalibro_processor.yml.sample" 
+  end
 end
 
 #execute bundle install for install all gems
@@ -217,4 +193,15 @@ end
 #	cwd "#{repo_folder}/kalibro_gatekeeper"
 #	command "bundle exec rake db:setup"
 #	action :run
+#end
+
+
+# Kalibro web service
+#bash "Kalibro web service" do
+#  code <<-EOH
+#  git clone https://gist.github.com/0c4ad3b5700c6364abf1.git
+#  cd 0c4ad3b5700c6364abf1
+#  chmod +x install.sh
+#  ./install.sh
+#  EOH
 #end
